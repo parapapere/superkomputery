@@ -30,6 +30,14 @@ struct Solution {
     }
 };
 
+// Assignment operator
+Solution& operator=(const Solution& other) {
+    if (this != &other) {
+        permutation = other.permutation;
+    }
+    return *this;
+}
+
 // Funkcja celu - minimalizacja sumy czasów przetwarzania wszystkich zadań na wszystkich maszynach.
 int objectiveFunction(const Solution& solution, const vector<vector<int>>& processingTimes) {
     int n = solution.permutation.size();
@@ -107,7 +115,8 @@ void generateAndEvaluateNeighbors(const Solution& currentSolution, const vector<
             currentSolution = neighbor;
             localBestObjective = neighborObjective;
 
-            if (localBestObjective < localBestObjective) {
+            // Aktualizacja najlepszego rozwiązania dla danego wątku.
+            if (localBestObjective < bestObjectives[threadId]) {
                 localBestSolution = currentSolution;
                 localBestObjective = localBestObjective;
             }
