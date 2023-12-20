@@ -43,7 +43,7 @@ int objectiveFunction(const Solution& solution, const vector<vector<int>>& proce
             completionTimes[j] += processingTimes[solution.permutation[i]][j];
 
             // Jeżeli to nie pierwsza operacja na maszynie i nie pierwsza maszyna, uwzględniamy czas oczekiwania na poprzednie zadanie.
-            if (i > 0 && j > 0) {
+            if (i >= 0 && j > 0) {
                 completionTimes[j] = max(completionTimes[j], completionTimes[j - 1]);
             }
 
@@ -117,7 +117,7 @@ Solution tabuSearch(const vector<vector<int> >& processingTimes, int maxIteratio
     return bestSolution;
 }
 
-void parallelTabuSearch(const vector<vector<int>>& processingTimes, int maxIterations, int tabuSize, int numThreads) {
+void parallelStartTabuSearch(const vector<vector<int>>& processingTimes, int maxIterations, int tabuSize, int numThreads) {
     vector<thread> threads;
     vector<Solution> bestSolutions(numThreads);
     vector<int> bestObjectives(numThreads, numeric_limits<int>::max());
