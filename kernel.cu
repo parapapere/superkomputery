@@ -168,6 +168,7 @@ __global__ void tabuSearchKernel(int* bestSolution, int* bestObjective, const in
         int* uniqueEnd = findUnique(tabuListPtr, tabuSize, n);
 
         // Skopiowanie unikalnych elementów do początku listy tabu
+        // thrust::distance - odległóść między dwoma elementami
         if (thrust::distance(uniqueEnd, tabuListPtr) > tabuSize * n) {
             int* destIter = tabuListPtr;
 
@@ -240,8 +241,16 @@ int main() {
     int* d_bestObjective;
     cudaMalloc((void**)&d_bestObjective, sizeof(int));
 
+    // Definicja liczby bloków i wątków.
+    int blocks = 1;
+    int threads = 1;
+
+
     // Uruchomienie algorytmu Tabu Search na urządzeniu.
-    tabuSearchKernel << <1, 1, tabuSize* n * sizeof(int) >> > (d_bestSolution, d_bestObjective, d_processingTimes, n, m, maxIterations, tabuSize);
+    tabuSearchKernel << <blocks, threads>> > (d_bestSolution, d_bestObjective, d_processingTimes, n, m, maxIterations, tabuSize);
+
+    // Oczekiwanie na zakończenie operacji na GPU
+    cudaDeviceSynchronize();
 
     // Pobranie wyniku z urządzenia.
     int* h_bestSolution = new int[n];
