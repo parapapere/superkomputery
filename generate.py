@@ -14,6 +14,10 @@ def save_processing_times_to_file(processing_times):
     # Zapis danych do pliku JSON
     with open(f"data/{tasks}_{machines}.json", 'w') as file:
         json.dump(processing_times, file)
+    # Zapis danych do pliku CSV
+    with open(f"data/{tasks}_{machines}.csv", 'w') as file:
+        for row in processing_times:
+            file.write(','.join(map(str, row)) + '\n')
 
 times = generate_processing_times(tasks, machines)
 
