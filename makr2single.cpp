@@ -100,7 +100,8 @@ vector<vector<int>> loadProcessingTimesFromJSON(const string& filePath) {
     return processingTimes;
 }
 
-int main() {
+
+int main(int argc, char* argv[]) {
     srand(time(0));
 
     // Load processing times from a JSON file dynamically
@@ -109,10 +110,17 @@ int main() {
     int numJobs = processingTimes.size();
     int numMachines = (numJobs > 0) ? processingTimes[0].size() : 0;
 
-    int nIterations = 10; // Set the number of iterations
-
+    // Default values
+    int nIterations = 10;
     int maxIterations = 100;
     int tabuListSize = 5;
+
+    if (argc >= 4) {
+        // If there are enough command-line arguments, use them
+        nIterations = atoi(argv[1]);
+        maxIterations = atoi(argv[2]);
+        tabuListSize = atoi(argv[3]);
+    }
 
     vector<int> bestSolution;
     int bestMakespan = numeric_limits<int>::max();
