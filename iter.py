@@ -14,12 +14,14 @@ def compile_and_run(executable_name, source_filename):
     return elapsed_time
 
 if __name__ == "__main__":
-    # Replace 'mark2' and 'mark2single' with your actual executable names
     multi_threaded_executable = 'mark2'
     single_threaded_executable = 'mark2single'
 
     multi_threaded_time = compile_and_run(multi_threaded_executable, 'mark2.cpp')
     single_threaded_time = compile_and_run(single_threaded_executable, 'mark2single.cpp')
 
-    print(f"\nSingle-Threaded Time: {single_threaded_time:.2f} seconds")
-    print(f"Multi-Threaded Time: {multi_threaded_time:.2f} seconds")
+    with open("execution_times.txt", "w") as f:
+        f.write("SingleThreadedTime,MultiThreadedTime\n")
+        f.write(f"{single_threaded_time},{multi_threaded_time}\n")
+
+    print(f"\nExecution times saved to execution_times.txt")
