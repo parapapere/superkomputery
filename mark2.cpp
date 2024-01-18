@@ -100,18 +100,23 @@ vector<vector<int>> loadProcessingTimesFromJSON(const string& filePath) {
     return processingTimes;
 }
 
-int main() {
+int main(int argc, char* argv[]) {
     srand(time(0));
 
-    string filePath = "your_file_path.json";
+    if (argc != 5) {
+        cerr << "Usage: " << argv[0] << " <file_path.json> <num_threads> <max_iterations_per_thread> <tabu_list_size>" << endl;
+        return 1;
+    }
+
+    string filePath = argv[1];
     vector<vector<int>> processingTimes = loadProcessingTimesFromJSON(filePath);
 
     int numJobs = processingTimes.size();
     int numMachines = (numJobs > 0) ? processingTimes[0].size() : 0;
 
-    int numThreads = 4;
-    int maxIterationsPerThread = 25;
-    int tabuListSize = 5;
+    int numThreads = stoi(argv[2]);
+    int maxIterationsPerThread = stoi(argv[3]);
+    int tabuListSize = stoi(argv[4]);
 
     vector<thread> threads;
     vector<vector<int>> localBestSolutions(numThreads);
