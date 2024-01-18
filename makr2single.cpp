@@ -1,12 +1,10 @@
 #include <iostream>
-#include <fstream>
 #include <vector>
 #include <algorithm>
 #include <limits>
 #include <cmath>
 #include <ctime>
-#include <thread>
-#include <mutex>
+#include <fstream>
 #include <json/json.h>
 
 using namespace std;
@@ -29,6 +27,7 @@ int calculateMakespan(const vector<int>& permutation, const vector<vector<int>>&
     return completionTimes[numMachines - 1];
 }
 
+// Function to generate a random solution
 vector<int> generateRandomSolution(int numJobs) {
     vector<int> solution(numJobs);
     for (int i = 0; i < numJobs; ++i) {
@@ -38,9 +37,10 @@ vector<int> generateRandomSolution(int numJobs) {
     return solution;
 }
 
-void tabuSearchWorker(int threadID, int maxIterations, int tabuListSize, vector<int>& localBestSolution, int& localBestMakespan, const vector<vector<int>>& processingTimes) {
+// Function to perform tabu search
+void tabuSearch(int maxIterations, int tabuListSize, vector<int>& bestSolution, int& bestMakespan, const vector<vector<int>>& processingTimes) {
     int numJobs = processingTimes.size();
-    
+
     for (int iteration = 0; iteration < maxIterations; ++iteration) {
         vector<int> currentSolution = generateRandomSolution(numJobs);
 
@@ -68,9 +68,9 @@ void tabuSearchWorker(int threadID, int maxIterations, int tabuListSize, vector<
         currentSolution = bestNeighbor;
         int currentMakespan = minNeighborMakespan;
 
-        if (currentMakespan < localBestMakespan) {
-            localBestSolution = currentSolution;
-            localBestMakespan = currentMakespan;
+        if (currentMakespan < bestMakespan) {
+            bestSolution = currentSolution;
+            bestMakespan = currentMakespan;
         }
     }
 }
@@ -103,45 +103,35 @@ vector<vector<int>> loadProcessingTimesFromJSON(const string& filePath) {
 int main() {
     srand(time(0));
 
-    string filePath = "your_file_path.json";
-    vector<vector<int>> processingTimes = loadProcessingTimesFromJSON(filePath);
+    // Load processing times from a JSON file dynamically
+    vector<vector<int>> processingTimes = loadProcessingTimesFromJSON("your_input_file.json");
 
     int numJobs = processingTimes.size();
     int numMachines = (numJobs > 0) ? processingTimes[0].size() : 0;
 
-    int numThreads = 4;
-    int maxIterationsPerThread = 25;
+    int nIterations = 10; // Set the number of iterations
+
+    int maxIterations = 100;
     int tabuListSize = 5;
 
-    vector<thread> threads;
-    vector<vector<int>> localBestSolutions(numThreads);
-    vector<int> localBestMakespans(numThreads, numeric_limits<int>::max());
+    vector<int> bestSolution;
+    int bestMakespan = numeric_limits<int>::max();
 
-    for (int i = 0; i < numThreads; ++i) {
-        threads.emplace_back(tabuSearchWorker, i, maxIterationsPerThread, tabuListSize, ref(localBestSolutions[i]), ref(localBestMakespans[i]), processingTimes);
-    }
+    for (int i = 0; i < nIterations; ++i) {
+        tabuSearch(maxIterations, tabuListSize, bestSolution, bestMakespan, processingTimes);
 
-    for (auto& t : threads) {
-        t.join();
-    }
-
-    int globalBestMakespan = numeric_limits<int>::max();
-    vector<int> globalBestSolution;
-
-    for (int i = 0; i < numThreads; ++i) {
-        if (localBestMakespans[i] < globalBestMakespan) {
-            globalBestMakespan = localBestMakespans[i];
-            globalBestSolution = localBestSolutions[i];
+        cout << "Iteration " << i + 1 << " - Best Solution - Optimal Permutation: ";
+        for (int jobIndex : bestSolution) {
+            cout << jobIndex << " ";
         }
-    }
+        cout << endl;
 
-    cout << "Global Best Solution - Optimal Permutation: ";
-    for (int jobIndex : globalBestSolution) {
-        cout << jobIndex << " ";
-    }
-    cout << endl;
+        cout << "Iteration " << i + 1 << " - Best Solution - Optimal Makespan: " << bestMakespan << endl;
 
-    cout << "Global Best Solution - Optimal Makespan: " << globalBestMakespan << endl;
+        // Reset best solution for the next iteration
+        bestSolution.clear();
+        bestMakespan = numeric_limits<int>::max();
+    }
 
     return 0;
 }
