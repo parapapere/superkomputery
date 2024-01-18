@@ -15,13 +15,12 @@ def compile_and_run(executable_name, source_filename):
 
 if __name__ == "__main__":
     multi_threaded_executable = 'mark2'
-    single_threaded_executable = 'mark2single'
+    single_threaded_executable = 'makr2single'
 
     multi_threaded_time = compile_and_run(multi_threaded_executable, 'mark2.cpp')
-    single_threaded_time = compile_and_run(single_threaded_executable, 'mark2single.cpp')
+    single_threaded_time = compile_and_run(single_threaded_executable, 'makr2single.cpp')
 
     with open("execution_times.txt", "w") as f:
-        f.write("SingleThreadedTime,MultiThreadedTime\n")
         f.write(f"{single_threaded_time},{multi_threaded_time}\n")
 
     print(f"\nExecution times saved to execution_times.txt")
