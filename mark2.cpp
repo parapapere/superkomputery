@@ -113,7 +113,6 @@ int main(int argc, char* argv[]) {
 
     int numJobs = processingTimes.size();
     int numMachines = (numJobs > 0) ? processingTimes[0].size() : 0;
-
     int numThreads = stoi(argv[2]);
     int maxIterationsPerThread = stoi(argv[3]);
     int tabuListSize = stoi(argv[4]);

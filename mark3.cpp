@@ -196,18 +196,21 @@ void tabuSearchThread(const vector<vector<int>>& processingTimes, int maxIterati
     }
 }
 
-int main() {
+int main(int argc, char* argv[]) {
     srand(static_cast<unsigned>(time(0)));
 
+
+    // Parametry algorytmu.
+    int maxIterations = stoi(argv[1]);;
+    int tabuSize =      stoi(argv[3]);
+    int numThreads =    stoi(argv[2]);
+
+
     // Ścieżka do pliku JSON
-    string filePath = "data/100_10.json";
+    string filePath = argv[4];
 
     // Wczytanie danych z pliku JSON
     vector<vector<int>> processingTimes = loadProcessingTimesFromJSON(filePath);
-
-    // Parametry algorytmu.
-    int maxIterations = 100;
-    int tabuSize = 10;
 
     // Uruchomienie algorytmu Tabu Search.
     Solution result = tabuSearch(processingTimes, maxIterations, tabuSize);
@@ -220,7 +223,7 @@ int main() {
     cout << "\nCzas przetwarzania wszystkich zadań na wszystkich maszynach: " << objectiveFunction(result, processingTimes) << endl;
 
     // Parametry dla wielowątkowego rozwiązania.
-    int numThreads = 4;
+
     vector<thread> threads;
     vector<Solution> bestSolutions(numThreads, result);
     vector<int> bestObjectives(numThreads, objectiveFunction(result, processingTimes));
